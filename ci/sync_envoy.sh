@@ -15,8 +15,8 @@ elif [[ ! -e "$ENVOY_SRC_DIR" ]]; then
     exit 1
 fi
 
-# git config --global user.email "$COMMITTER_EMAIL"
-# git config --global user.name "$COMMITTER_NAME"
+git config --global user.email "$COMMITTER_EMAIL"
+git config --global user.name "$COMMITTER_NAME"
 
 
 # Determine last envoyproxy/envoy SHA in envoyproxy/data-plane-api
@@ -35,7 +35,6 @@ read -r -a SHAS <<< "$(git -C "$ENVOY_SRC_DIR" rev-list --reverse "$LAST_ENVOY_S
 # For each SHA, hard reset, rsync api/ and generate commit in
 # envoyproxy/data-plane-api
 API_WORKING_DIR="../envoy-api-mirror"
-git -C "$ENVOY_SRC_DIR" worktree prune
 git -C "$ENVOY_SRC_DIR" worktree add "$API_WORKING_DIR"
 for sha in "${SHAS[@]}"; do
     echo "Adding commit ${sha}"
@@ -50,8 +49,7 @@ done
 
 if [[ "${#SHAS[@]}" -ne 0 ]]; then
     echo "Pushing..."
-    echo "SIKE!"
-    # git push origin "${API_MAIN_BRANCH}"
+    git push origin "${API_MAIN_BRANCH}"
 else
     echo "Nothing to push"
 fi
